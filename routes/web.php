@@ -1,31 +1,28 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// ── TEMPORAL: crea/confirma el usuario admin. Borrar tras usarlo. ──
-// Visitar: /setup-admin?token=TU_ADMIN_API_TOKEN
-Route::get('/setup-admin', function (Request $request) {
-    $token = config('services.admin.token');
+// Botón "Publicar" del panel: dispara el rebuild/reexport del sitio estático
+// (Astro) en Vercel mediante su deploy hook. Solo para usuarios autenticados.
+Route::post('/publish', function () {
+    $hook = config('services.prismic.deploy_hook_url');
 
-    if (! $token || ! hash_equals($token, (string) $request->query('token'))) {
-        abort(403, 'Token inválido.');
+    if (! $hook) {
+        return back()->with('publish_status', 'Falta configurar DEPLOY_HOOK_URL.');
     }
 
-    $user = \App\Models\User::updateOrCreate(
-        ['email' => 'chelo@zooblog.com'],
-        ['name' => 'Admin', 'password' => Hash::make('password123')]
-    );
+    try {
+        $response = Http::timeout(15)->post($hook);
 
-    return response()->json([
-        'ok'           => true,
-        'email'        => $user->email,
-        'just_created' => $user->wasRecentlyCreated,
-        'total_users'  => \App\Models\User::count(),
-    ]);
-});
+        return back()->with('publish_status', $response->successful()
+            ? '✓ Publicación iniciada: el sitio se está reconstruyendo.'
+            : 'Error al publicar (código '.$response->status().').');
+    } catch (\Throwable $e) {
+        return back()->with('publish_status', 'Error al publicar: '.$e->getMessage());
+    }
+})->middleware('auth')->name('publish');
