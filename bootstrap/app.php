@@ -17,7 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Render (y otros hosts) ponen la app detrás de un proxy. Hay que
+        // confiar en él para que Laravel detecte HTTPS correctamente; si no,
+        // las cookies de sesión fallan y el login "no entra" (rebota al login).
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
