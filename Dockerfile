@@ -21,6 +21,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Render inyecta el puerto en la variable $PORT
 EXPOSE 8000
 CMD php artisan migrate --force \
+    && php artisan db:seed --force \
     && (php artisan storage:link || true) \
     && php artisan config:cache \
     && php artisan serve --host 0.0.0.0 --port ${PORT:-8000}
