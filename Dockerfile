@@ -1,12 +1,12 @@
-# Imagen base con PHP 8.3
-FROM php:8.3-cli
+# Imagen base con PHP 8.4 (tus dependencias requieren >=8.4.1)
+FROM php:8.4-cli
 
 # Dependencias del sistema + extensiones de PHP que Laravel/Filament necesitan
 RUN apt-get update && apt-get install -y \
         git unzip \
-        libpq-dev libzip-dev libpng-dev libjpeg-dev libfreetype6-dev \
+        libpq-dev libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libicu-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_pgsql zip bcmath gd \
+    && docker-php-ext-install pdo pdo_pgsql zip bcmath gd intl \
     && rm -rf /var/lib/apt/lists/*
 
 # Composer
