@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class TutorialForm
 {
@@ -18,7 +19,10 @@ class TutorialForm
                 TextInput::make('title')
                     ->required(),
                 TextInput::make('slug')
-                    ->required(),
+                    ->required()
+                    ->rule('regex:/[\p{L}\p{N}]/u')
+                    ->helperText('Solo minúsculas, números y guiones. Se limpia automáticamente (ej: "¿Cómo cuidar un perro?" → "como-cuidar-un-perro").')
+                    ->dehydrateStateUsing(fn (?string $state) => Str::slug($state ?? '')),
                 TextInput::make('lang')
                     ->required()
                     ->default('es'),
