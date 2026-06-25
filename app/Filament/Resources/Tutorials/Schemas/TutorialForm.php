@@ -8,7 +8,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 
 class TutorialForm
 {
@@ -20,9 +19,11 @@ class TutorialForm
                     ->required(),
                 TextInput::make('slug')
                     ->required()
-                    ->rule('regex:/[\p{L}\p{N}]/u')
-                    ->helperText('Solo minúsculas, números y guiones. Se limpia automáticamente (ej: "¿Cómo cuidar un perro?" → "como-cuidar-un-perro").')
-                    ->dehydrateStateUsing(fn (?string $state) => Str::slug($state ?? '')),
+                    ->rule('regex:/^[a-z0-9-]+$/')
+                    ->validationMessages([
+                        'regex' => 'El slug solo acepta minúsculas, números y guiones — nada de espacios, acentos ni signos como ?¿.',
+                    ])
+                    ->helperText('Solo minúsculas, números y guiones. Ej: como-cuidar-un-perro'),
                 TextInput::make('lang')
                     ->required()
                     ->default('es'),
