@@ -42,6 +42,10 @@ class TutorialForm
                 FileUpload::make('cover_image')
                     ->image()
                     ->disk(config('filesystems.tutorials_disk')),
+                TextInput::make('image_alt')
+                    ->label('Texto alternativo (alt) de la imagen')
+                    ->helperText('Describe la imagen para SEO y accesibilidad. Ej: "Perro labrador jugando en el césped".')
+                    ->maxLength(255),
                 TextInput::make('level'),
                 Toggle::make('is_published')
                     ->required(),

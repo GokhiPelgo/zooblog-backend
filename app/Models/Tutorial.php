@@ -13,6 +13,7 @@ class Tutorial extends Model
         'excerpt',
         'content',
         'cover_image',
+        'image_alt',
         'level',
         'is_published',
         'published_at',

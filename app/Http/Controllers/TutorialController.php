@@ -20,7 +20,7 @@ class TutorialController extends Controller
             ->when($request->query('lang'), fn ($q, $lang) => $q->where('lang', $lang))
             ->orderByDesc('published_at')
             ->orderByDesc('created_at')
-            ->get(['id', 'title', 'slug', 'lang', 'excerpt', 'cover_image', 'level', 'published_at'])
+            ->get(['id', 'title', 'slug', 'lang', 'excerpt', 'cover_image', 'image_alt', 'level', 'published_at'])
             ->each(fn (Tutorial $t) => $t->cover_image = $this->imageUrl($t->cover_image));
 
         return response()->json($tutorials);
