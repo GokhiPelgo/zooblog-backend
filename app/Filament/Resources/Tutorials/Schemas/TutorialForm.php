@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Tutorials\Schemas;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
@@ -25,9 +26,15 @@ class TutorialForm
                         'regex' => 'El slug solo acepta minúsculas, números y guiones — nada de espacios, acentos ni signos como ?¿.',
                     ])
                     ->helperText('Solo minúsculas, números y guiones. Ej: como-cuidar-un-perro'),
-                TextInput::make('lang')
+                Select::make('lang')
+                    ->label('Idioma')
+                    ->options([
+                        'es' => 'Español',
+                        'en' => 'English',
+                    ])
+                    ->default('es')
                     ->required()
-                    ->default('es'),
+                    ->native(false),
                 Textarea::make('excerpt')
                     ->columnSpanFull(),
                 RichEditor::make('content')
