@@ -36,7 +36,7 @@ return [
             // Sin esto, la subida de archivos falla.
             'request_checksum_calculation' => 'when_required',
             'response_checksum_validation' => 'when_required',
-            'throw' => false,
+            'throw' => true,
             'report' => false,
         ],
 
