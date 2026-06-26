@@ -33,7 +33,7 @@ class TutorialForm
                     ->columnSpanFull(),
                 FileUpload::make('cover_image')
                     ->image()
-                    ->disk('public'),
+                    ->disk(config('filesystems.default')),
                 TextInput::make('level'),
                 Toggle::make('is_published')
                     ->required(),

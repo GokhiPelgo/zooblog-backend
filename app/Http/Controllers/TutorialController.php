@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Tutorial;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TutorialController extends Controller
 {
@@ -19,7 +20,8 @@ class TutorialController extends Controller
             ->when($request->query('lang'), fn ($q, $lang) => $q->where('lang', $lang))
             ->orderByDesc('published_at')
             ->orderByDesc('created_at')
-            ->get(['id', 'title', 'slug', 'lang', 'excerpt', 'cover_image', 'level', 'published_at']);
+            ->get(['id', 'title', 'slug', 'lang', 'excerpt', 'cover_image', 'level', 'published_at'])
+            ->each(fn (Tutorial $t) => $t->cover_image = $this->imageUrl($t->cover_image));
 
         return response()->json($tutorials);
     }
@@ -40,6 +42,24 @@ class TutorialController extends Controller
             return response()->json(['message' => 'Tutorial no encontrado.'], 404);
         }
 
+        $tutorial->cover_image = $this->imageUrl($tutorial->cover_image);
+
         return response()->json($tutorial);
+    }
+
+    /**
+     * Convierte la ruta guardada de la imagen en una URL pública completa,
+     * usando el disco por defecto (s3 en producción, public en local).
+     */
+    private function imageUrl(?string $path): ?string
+    {
+        if (! $path) {
+            return null;
+        }
+        if (str_starts_with($path, 'http')) {
+            return $path;
+        }
+
+        return Storage::disk(config('filesystems.default'))->url($path);
     }
 }
