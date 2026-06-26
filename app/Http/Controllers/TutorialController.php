@@ -60,6 +60,6 @@ class TutorialController extends Controller
             return $path;
         }
 
-        return Storage::disk(config('filesystems.default'))->url($path);
+        return Storage::disk(config('filesystems.tutorials_disk'))->url($path);
     }
 }

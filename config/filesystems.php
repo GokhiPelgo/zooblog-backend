@@ -4,6 +4,12 @@ return [
 
 
     'default' => env('FILESYSTEM_DISK', 'local'),
+
+    // Disco donde se guardan las imágenes subidas en el panel (tutoriales).
+    // En producción: s3 (R2). En local: public. Independiente del disco por
+    // defecto, para que las subidas temporales de Livewire NO usen R2.
+    'tutorials_disk' => env('UPLOADS_DISK', 'public'),
+
     'disks' => [
 
         'local' => [
@@ -36,7 +42,7 @@ return [
             // Sin esto, la subida de archivos falla.
             'request_checksum_calculation' => 'when_required',
             'response_checksum_validation' => 'when_required',
-            'throw' => true,
+            'throw' => false,
             'report' => false,
         ],
 
