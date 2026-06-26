@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,3 +28,27 @@ Route::post('/publish', function () {
         return back()->with('publish_status', 'Error al publicar: '.$e->getMessage());
     }
 })->middleware('auth')->name('publish');
+
+// ── TEMPORAL: prueba la conexión a R2/S3. Borrar tras diagnosticar. ──
+// Visitar: /r2-test?token=TU_ADMIN_API_TOKEN
+Route::get('/r2-test', function (Request $request) {
+    $token = config('services.admin.token');
+    if ($token && ! hash_equals($token, (string) $request->query('token'))) {
+        abort(403, 'Token inválido.');
+    }
+
+    try {
+        Storage::disk('s3')->put('r2-test.txt', 'hola desde zooblog');
+
+        return response()->json([
+            'ok'  => true,
+            'url' => Storage::disk('s3')->url('r2-test.txt'),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'ok'    => false,
+            'class' => get_class($e),
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+});
