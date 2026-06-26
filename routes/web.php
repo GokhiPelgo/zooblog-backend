@@ -37,18 +37,17 @@ Route::get('/r2-test', function (Request $request) {
         abort(403, 'Token inválido.');
     }
 
-    try {
-        Storage::disk('s3')->put('r2-test.txt', 'hola desde zooblog');
-
-        return response()->json([
-            'ok'  => true,
-            'url' => Storage::disk('s3')->url('r2-test.txt'),
-        ]);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'ok'    => false,
-            'class' => get_class($e),
-            'error' => $e->getMessage(),
-        ], 500);
+    $results = [];
+    foreach (['sin_visibilidad' => null, 'private' => 'private', 'public' => 'public'] as $label => $vis) {
+        try {
+            $vis === null
+                ? Storage::disk('s3')->put("r2-test-{$label}.txt", 'hola')
+                : Storage::disk('s3')->put("r2-test-{$label}.txt", 'hola', $vis);
+            $results[$label] = 'OK';
+        } catch (\Throwable $e) {
+            $results[$label] = class_basename($e).': '.$e->getMessage();
+        }
     }
+
+    return response()->json($results);
 });
