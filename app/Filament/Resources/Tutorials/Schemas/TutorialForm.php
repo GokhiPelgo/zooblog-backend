@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Tutorials\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
@@ -29,7 +30,7 @@ class TutorialForm
                     ->default('es'),
                 Textarea::make('excerpt')
                     ->columnSpanFull(),
-                Textarea::make('content')
+                RichEditor::make('content')
                     ->columnSpanFull(),
                 FileUpload::make('cover_image')
                     ->image()
