@@ -42,7 +42,18 @@ class TutorialController extends Controller
             return response()->json(['message' => 'Tutorial no encontrado.'], 404);
         }
 
+        // Slug de la versión en el otro idioma (mismo translation_key), si existe.
+        $alternateSlug = null;
+        if ($tutorial->translation_key) {
+            $alternateSlug = Tutorial::query()
+                ->where('is_published', true)
+                ->where('translation_key', $tutorial->translation_key)
+                ->where('lang', '!=', $tutorial->lang)
+                ->value('slug');
+        }
+
         $tutorial->cover_image = $this->imageUrl($tutorial->cover_image);
+        $tutorial->alternate_slug = $alternateSlug;
 
         return response()->json($tutorial);
     }

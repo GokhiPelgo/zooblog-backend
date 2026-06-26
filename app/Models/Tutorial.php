@@ -9,6 +9,7 @@ class Tutorial extends Model
     protected $fillable = [
         'title',
         'slug',
+        'translation_key',
         'lang',
         'excerpt',
         'content',

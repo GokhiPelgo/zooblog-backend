@@ -26,6 +26,9 @@ class TutorialForm
                         'regex' => 'El slug solo acepta minúsculas, números y guiones — nada de espacios, acentos ni signos como ?¿.',
                     ])
                     ->helperText('Solo minúsculas, números y guiones. Ej: como-cuidar-un-perro'),
+                TextInput::make('translation_key')
+                    ->label('Clave de traducción')
+                    ->helperText('Usa el MISMO valor en las dos versiones (es/en) para enlazarlas al cambiar de idioma. Ej: cuidar-perro. Déjalo vacío si el tutorial es de un solo idioma.'),
                 Select::make('lang')
                     ->label('Idioma')
                     ->options([
