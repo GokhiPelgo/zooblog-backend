@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactRequest;
+use App\Mail\ContactConfirmationMail;
 use App\Mail\ContactMessageMail;
 use App\Models\ContactMessage;
 use Illuminate\Http\JsonResponse;
@@ -52,6 +53,15 @@ class ContactController extends Controller
                 ));
         } catch (\Throwable $e) {
             Log::error('ContactMessageMail failed: ' . $e->getMessage());
+        }
+
+        // Confirmación al remitente. OJO: Resend solo envía a correos ajenos
+        // (no tu cuenta) si tienes un DOMINIO VERIFICADO. Fallo silencioso.
+        try {
+            Mail::to($data['email'])
+                ->send(new ContactConfirmationMail(senderName: $data['name']));
+        } catch (\Throwable $e) {
+            Log::error('ContactConfirmationMail failed: ' . $e->getMessage());
         }
 
         return response()->json([
